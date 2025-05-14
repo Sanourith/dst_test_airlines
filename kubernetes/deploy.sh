@@ -1,12 +1,16 @@
 #! /bin/bash
 
 kubectl create namespace airlines || (kubectl get namespaces | grep "airlines")
+kubectl apply -f mysql/ --namespace=airlines
+
+
+
 # echo " -- Start the creation of MongoDB -- "
 # helm install mongodb ./mongo-DB/ -n airlines
 # echo " -- Creation of MongoDB done -- "
-echo " -- Start the creation of MySQL -- "
-helm upgrade --install mysql ./mysql/ --namespace airlines
-echo " -- Creation of MySQL done -- "
+# echo " -- Start the creation of MySQL -- "
+# helm upgrade --install mysql ./mysql/ --namespace airlines
+# echo " -- Creation of MySQL done -- "
 # echo " -- Start the creation of FastAPI -- "
 # helm install fastapi ./fastapi/ -n airlines
 # echo " -- Creation of FastAPI done -- "

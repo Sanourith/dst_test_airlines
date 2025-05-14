@@ -1,24 +1,47 @@
 import os
-from pathlib import Path
 from dotenv import load_dotenv
-import pymysql
 from dst_airlines.database.mysql import create_connection, insert_data_from_csv
+from pathlib import Path
+from logging import getLogger, basicConfig, INFO
 
+logger = getLogger(__name__)
+basicConfig(level=INFO)
 
-script_path = os.path.dirname(os.path.abspath(__file__))
-
-env_file = os.path.join(script_path, "../env/private.env")
-airports_csv = os.path.join(script_path, "../data/4_external/airport_names.csv")
+script_path = Path(__file__).parent.absolute()
+env_file = script_path.parent / "env" / "private.env"
+airports_csv = script_path.parent / "data" / "4_external" / "airport_names.csv"
 
 
 def main():
-    table_name = "airports"
+    if not env_file.exists():
+        logger.error(f"Environment file not found: {env_file}")
+        return
 
-    engine = create_connection()
-    if engine:
-        insert_data_from_csv(engine, airports_csv, table_name)
+    if not airports_csv.exists():
+        logger.error(f"CSV file not found: {airports_csv}")
+        return
+
+    load_dotenv(env_file)
+
+    connection = create_connection()
+    if not connection:
+        logger.error("Failed to connect to database")
+        return
+
+    try:
+        table_name = "airports"
+        logger.info(f"Starting data import from {airports_csv} to table {table_name}")
+
+        insert_data_from_csv(connection, str(airports_csv), table_name)
+
+        logger.info("Data import completed successfully")
+    except Exception as e:
+        logger.error(f"An error occurred during data import: {e}")
+    finally:
+        if connection:
+            connection.close()
+            logger.info("Database connection closed")
 
 
 if __name__ == "__main__":
-    load_dotenv(env_file)
     main()
