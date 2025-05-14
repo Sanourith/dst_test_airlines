@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from logging import getLogger
+import pandas as pd
 
 logger = getLogger(__name__)
 
@@ -39,4 +40,12 @@ def create_connection():
         return None
 
 
-create_connection()
+def insert_data_from_csv(engine, csv_file_path, table_name):
+    try:
+        df = pd.read_csv(csv_file_path)
+        df.to_sql(table_name, con=engine, if_exists="replace", index="false")
+        logger.info(
+            f"Data from {csv_file_path} inserted successfully into {table_name}"
+        )
+    except Exception as e:
+        logger.error(f"Error inserting data from CSV : {e}")
