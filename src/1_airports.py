@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from dst_airlines.database.mysql import create_connection, insert_data_from_csv
+from dst_airlines.
 from pathlib import Path
 from dst_airlines.logging.log import setup_logger
 
@@ -28,7 +29,7 @@ def main():
         return
 
     try:
-        table_name = "airports"
+        table_name = "Airports"
         logger.info(f"Starting data import from {airports_csv} to table {table_name}")
 
         insert_data_from_csv(connection, str(airports_csv), table_name)

@@ -2,24 +2,33 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: mysql-pv
+  labels:
+    app: mysql
+    type: local
 spec:
+  storageClassName: manual
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   hostPath:
     path: "/mnt/data/mysql"
-  # persistentVolumeReclaimPolicy: Retain
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-pvc
+  namespace: airlines
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
-  storageClassName: ""
+  selector:
+    matchLabels:
+      app: mysql
+      type: local
