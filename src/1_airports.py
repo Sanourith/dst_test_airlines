@@ -2,10 +2,9 @@ import os
 from dotenv import load_dotenv
 from dst_airlines.database.mysql import create_connection, insert_data_from_csv
 from pathlib import Path
-from logging import getLogger, basicConfig, INFO
+from dst_airlines.logging.log import setup_logger
 
-logger = getLogger(__name__)
-basicConfig(level=INFO)
+logger = setup_logger(__name__)
 
 script_path = Path(__file__).parent.absolute()
 env_file = script_path.parent / "env" / "private.env"

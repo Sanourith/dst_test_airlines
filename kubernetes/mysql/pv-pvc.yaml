@@ -4,23 +4,22 @@ metadata:
   name: mysql-pv
 spec:
   capacity:
-    storage: 2Gi
+    storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  storageClassName: manual
   hostPath:
-    path: /mnt/mysql-data
-    type: DirectoryOrCreate
+    path: "/mnt/data/mysql"
+  # persistentVolumeReclaimPolicy: Retain
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-pvc
-  namespace: airlines
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi
-  storageClassName: manual
+      storage: 1Gi
+  storageClassName: ""
