@@ -38,16 +38,21 @@ def create_connection():
         return None
 
 
+def airports_data_etl(df):
+    df_clean = df.dropna(subset=["airport_code"]).drop_duplicates(
+        subset=["airport_code"]
+    )
+    return df_clean
+
+
 def insert_airports_into_mysql(engine, dataframe, table_name, column_mapping):
     try:
         # mapping cols
         df_sql = dataframe[list(column_mapping.keys())].rename(columns=column_mapping)
 
-        df_sql = df_sql.dropna(subset=["airport_code"]).drop_duplicates(
-            subset=["airport_code"]
-        )
+        df_clean = airports_data_etl(df_sql)
 
-        df_sql.to_sql(name=table_name, con=engine, if_exists="append", index=False)
+        df_clean.to_sql(name=table_name, con=engine, if_exists="append", index=False)
 
         logger.info(f"Data from {dataframe} inserted successfully into {table_name}")
 
