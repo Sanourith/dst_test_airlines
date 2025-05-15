@@ -1,14 +1,12 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-import pymysql
-import pymysql.cursors
-from logging import getLogger
+from sqlalchemy import create_engine, text
+from sqlalchemy.exc import SQLAlchemyError
 import pandas as pd
-import logging
+from logging import getLogger
 
 logger = getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
 # Chargement des variables d'environnement
 script_path = os.path.dirname(os.path.abspath(__file__))
@@ -28,56 +26,30 @@ def create_connection():
             f"Attempting to connect to {mysql_host}:{mysql_port} as {mysql_user}"
         )
 
-        connection = pymysql.connect(
-            host=mysql_host,
-            user=mysql_user,
-            password=mysql_password,
-            database=mysql_database,
-            port=mysql_port,
-            cursorclass=pymysql.cursors.DictCursor,
-            charset="utf8mb4",
-        )
+        sql_cmd = "mysql+pymysql"
+        connection_string = f"{sql_cmd}://{mysql_user}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}"
+        engine = create_engine(connection_string)
 
         logger.info("Connection to MySQL established successfully.")
-        return connection
+        return engine
 
-    except pymysql.Error as e:
+    except SQLAlchemyError as e:
         logger.error(f"Error connecting to MySQL: {e}")
         return None
 
 
-def insert_data_from_csv(connection, csv_file_path, table_name):
+def insert_airports_into_mysql(engine, dataframe, table_name, column_mapping):
     try:
-        df = pd.read_csv(csv_file_path)
+        # mapping cols
+        df_sql = dataframe[list(column_mapping.keys())].rename(columns=column_mapping)
 
-        with connection.cursor() as cursor:
-            columns = ", ".join([f"`{col}` TEXT" for col in df.columns])
-            cursor.execute(f"CREATE TABLE IF NOT EXISTS `{table_name}` ({columns})")
-
-            placeholders = ", ".join(["%s"] * len(df.columns))
-            columns = ", ".join([f"`{col}`" for col in df.columns])
-            sql = f"INSERT INTO `{table_name}` ({columns}) VALUES ({placeholders})"
-
-            for _, row in df.iterrows():
-                cursor.execute(sql, tuple(row))
-
-            connection.commit()
-
-        logger.info(
-            f"Data from {csv_file_path} inserted successfully into {table_name}"
+        df_sql = df_sql.dropna(subset=["airport_code"]).drop_duplicates(
+            subset=["airport_code"]
         )
 
+        df_sql.to_sql(name=table_name, con=engine, if_exists="append", index=False)
+
+        logger.info(f"Data from {dataframe} inserted successfully into {table_name}")
+
     except Exception as e:
-        connection.rollback()
         logger.error(f"Error inserting data from CSV: {e}")
-
-
-def execute_query(connection, query, params=None):
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute(query, params or ())
-            result = cursor.fetchall()
-            return result
-    except pymysql.Error as e:
-        logger.error(f"Error executing query: {e}")
-        return None

@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
-from dst_airlines.database.mysql import create_connection, insert_data_from_csv
-from dst_airlines.
+from dst_airlines.load.mysql import create_connection, insert_airports_into_mysql
+from dst_airlines.transform.airports_etl import transform_airports_data
 from pathlib import Path
 from dst_airlines.logging.log import setup_logger
 
@@ -32,7 +32,9 @@ def main():
         table_name = "Airports"
         logger.info(f"Starting data import from {airports_csv} to table {table_name}")
 
-        insert_data_from_csv(connection, str(airports_csv), table_name)
+        airports_df = transform_airports_data(airports_csv)
+
+        insert_airports_into_mysql(connection, airports_df, table_name)
 
         logger.info("Data import completed successfully")
     except Exception as e:
