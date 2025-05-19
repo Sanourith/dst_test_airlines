@@ -321,7 +321,8 @@ def download_fullday_departing_flights(
     date: str = "",
     start_time: str = "00:00",
 ) -> None:
-    """Consolidated function to collect the departing flights from the start time (by default 00:00 - beginning of the day) till midnight
+    """Consolidated function to collect the departing flights from the start time
+    (by default 00:00 - beginning of the day) till midnight
     for the given date (by default 3 days ago) for a given airport using the given credentials
     The resulting data will be stored in raw format into data/1_raw then in interim format in data/2_interm in a consolidated JSON and CSV
 
