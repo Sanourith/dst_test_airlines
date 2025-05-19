@@ -1,0 +1,9 @@
+{
+  "metadata": {
+    "initial_flight_endpoint": "https://api.lufthansa.com/v1/operations/schedules/2025-05-18T00:00",
+    "time_at_execution": "2025-05-19 00:37:21",
+    "start_range": "2025-05-18T00:00",
+    "end_range": "2025-05-18T24:00"
+  },
+  "data": []
+}
