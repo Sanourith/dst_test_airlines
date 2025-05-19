@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from dst_airlines.logging.log import setup_logger
 import time
 from typing import List
+from dotenv import load_dotenv
 
 # from dotenv import load_dotenv # Chargé directement depuis le __init__.py (via config.py)
 
@@ -12,7 +13,15 @@ from .. import utils
 
 logger = setup_logger()
 
-URL = "https://api.lufthansa.com/v1"
+script_path = Path(__file__).parent.absolute()
+env_file = script_path.parents[1] / "env" / "private.env"
+if not env_file.exists():
+    raise FileNotFoundError(f".env file not found : {env_file}")
+
+
+load_dotenv(env_file)
+
+url_flights = os.getenv("URL_FLIGHTS")
 
 
 def fetch_departing_flights(
@@ -125,7 +134,7 @@ def fetch_departing_flights(
         ###
         # Récupération de la requête
         ###
-        request = f"{URL}{flight_endpoint}?limit={LIMIT}&offset={offset}"
+        request = f"{url_flights}{flight_endpoint}?limit={LIMIT}&offset={offset}"
         response = requests.get(request, headers=headers)
         logger.info(f"Requête envoyée à : {request}")
         logger.info(f"Code réponse : {response.status_code}")

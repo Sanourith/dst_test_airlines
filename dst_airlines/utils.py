@@ -4,8 +4,16 @@ from dst_airlines.logging.log import setup_logger
 import os
 import pandas as pd
 from flatten_json import flatten
+from dotenv import load_dotenv
+from pathlib import Path
 
 logger = setup_logger()
+script_path = Path(__file__).parent.absolute()
+env_file = script_path.parents[0] / "env" / "private.env"
+if not env_file.exists():
+    raise FileNotFoundError(f".env file not found : {env_file}")
+
+load_dotenv(env_file)
 
 
 def get_project_root_path() -> str:
@@ -25,7 +33,7 @@ def get_public_ip_address() -> str:
     Returns:
         str: Your public IP
     """
-    ipfy_url = "https://api.ipify.org?format=json"
+    ipfy_url = os.getenv("URL_IP_VERIFY")
 
     try:
         response = requests.get(ipfy_url)
