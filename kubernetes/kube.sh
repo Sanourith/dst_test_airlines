@@ -18,7 +18,7 @@ kubectl create configmap $MYSQL_CONFIGMAP_NAME \
 kubectl apply -f mysql/ -n $NAMESPACE
 
 # # POUR TOUT CASSER, commente au dessus et décommente ou utilise les commandes :
-# kubectl delete namespace airlines
+# kubectl delete namespace $NAMESPACE
 # kubectl delete pv mysql-pv
 
 # Tu peux aussi test avec k9s !
