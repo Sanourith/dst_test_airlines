@@ -6,6 +6,29 @@ set -e
 NAMESPACE="airlines"
 MYSQL_CONFIGMAP_NAME="mysql-init-scripts"
 
+echo "Deploying all mysql suite..."
+
+kubectl create namespace $NAMESPACE || kubectl get namespace $NAMESPACE
+kubectl delete configmap $MYSQL_CONFIGMAP_NAME -n $NAMESPACE --ignore-not-found
+kubectl create configmap $MYSQL_CONFIGMAP_NAME \
+  -n $NAMESPACE \
+  --from-file=create_dst_airlines_database.sql=./mysql/resources/create_dst_airlines_database.sql \
+  --from-file=create_dst_airlines_users.sql=./mysql/resources/create_dst_airlines_users.sql
+
+kubectl apply -f mysql/ -n $NAMESPACE
+
+# # POUR TOUT CASSER, commente au dessus et décommente ou utilise les commandes :
+# kubectl delete namespace airlines
+# kubectl delete pv mysql-pv
+
+# Tu peux aussi test avec k9s !
+# tape ": namespace"
+# "ctrl + D" sur le namespace
+# tape ": pv"
+# "ctrl + D" sur le pv
+# HOP
+
+
 print_help() {
   echo "Usage: $0 [deploy|delete] [--app <app>]"
   echo "Options:"
@@ -53,33 +76,33 @@ _complete() {
   # other will be added
 }
 
-OPT=$(getopt -o h -l help -l app: -l deploy -l delete -- "$@")
-if [ $? != 0 ]; then
-  echo "Error in options." >&2
-  exit 1
-fi
+# OPT=$(getopt -o h -l help -l app: -l deploy -l delete -- "$@")
+# if [ $? != 0 ]; then
+#   echo "Error in options." >&2
+#   exit 1
+# fi
 
-APP=""
+# APP=""
 
-eval set -- "$OPT"
-while true; do
-  case "$1" in
-    -h | --help)
-      print_help
-      exit 0
-      ;;
-    --app)
-      APP="$2"
-      shift 2
-      ;;
-    --)
-      shift
-      break
-      ;;
-    *)
-      echo "Unknown option : $1"
-      exit 1
-      ;;
+# eval set -- "$OPT"
+# while true; do
+#   case "$1" in
+#     -h | --help)
+#       print_help
+#       exit 0
+#       ;;
+#     --app)
+#       APP="$2"
+#       shift 2
+#       ;;
+#     --)
+#       shift
+#       break
+#       ;;
+#     *)
+#       echo "Unknown option : $1"
+#       exit 1
+#       ;;
 
 # ACTION="$1"
 # if [[ -z "$ACTION" ]]; then
@@ -107,7 +130,7 @@ while true; do
 #     echo ""
 #     ;;
 
-# kubectl create namespace $NAMESPACE || kubectl get namespace $NAMESPACE
+
 
 
 
