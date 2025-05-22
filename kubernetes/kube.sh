@@ -160,8 +160,6 @@ esac
 echo "Operation completed."
 
 
-
-
 # Post Forwarding du webserver
 
 #kubectl port-forward svc/fastapi-service 8000:80 -n airlines
