@@ -24,7 +24,6 @@ __pycache__/
 
 # C extensions
 *.so
-*.ipynb
 
 # Distribution / packaging
 .Python
@@ -39,7 +38,6 @@ lib64/
 parts/
 sdist/
 var/
-ipynb/
 wheels/
 share/python-wheels/
 *.egg-info/
@@ -98,6 +96,8 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+ipynb/
+*.ipynb
 
 # IPython
 profile_default/
