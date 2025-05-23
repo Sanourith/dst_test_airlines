@@ -340,7 +340,7 @@ def download_fullday_departing_flights(
         elif isinstance(date, str):
             date_formated = date
     else:
-        date_formated = (datetime.today() - timedelta(days=3)).strftime("%Y-%m-%d")
+        date_formated = (datetime.today() - timedelta(days=1)).strftime("%Y-%m-%d")
 
     file_name_base = f"{airport_iata}_{api_name}_dep_flights_{date_formated}"
 
