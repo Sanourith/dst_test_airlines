@@ -70,7 +70,7 @@ _deploy_app() {
     mysql)
       _mysql "$action"
       ;;
-    # AUTRES APPS ICI
+    # OTHER APPS HERE
     *)
       echo "Error : Unknown app '$app'"
       echo "Available apps : mysql"
